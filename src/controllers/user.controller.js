@@ -349,7 +349,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) =>{
       }
     },
     {
-      // note: this pipeline find the channel name from the subscriptions model. and here we...
+      // go to the subscriptions collection and matches channel with the _id of this user
       $lookup: {
         from: "subscriptions",
         localField: "_id",
@@ -358,6 +358,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) =>{
       }
     },
     {
+      // go to the subscriptions collection and matches subscriber with the _id of this user
       $lookup: {
         from: "subscriptions",
         localField: "_id",
@@ -367,13 +368,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) =>{
     },
     {
       $addFields: {
-        $subscribersCount: {
+        subscribersCount: {
           $size: "$subscribers"
         },
-        $channelSubscribedToCount:{
+        channelSubscribedToCount:{
           $size: "$subscribedTo"
         },
-        $isSubscribed: {
+        isSubscribed: {
           $cond: {
             if: {$in: [req.user?._id, "$subscribers.subscriber"]},//note: this line asks that either current user present in subscribers or not?
             then: true,
@@ -382,7 +383,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) =>{
         }
       }
     },{
-      // what this aggregate returns
+      // Chooses which fields to include in the final output. 1 means include the field
       $project: {
         fullname: 1,
         username: 1,
