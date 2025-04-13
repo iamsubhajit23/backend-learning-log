@@ -335,6 +335,79 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     .json(new apiResponse(200, user, "Cover Image updated Successfully!"));
 });
 
+const getUserChannelProfile = asyncHandler(async (req, res) =>{
+  const {username} = req.params
+
+  if (!username) {
+    throw new apiError(400, "Username is required")
+  }
+  
+  const channel = await User.aggregate([
+    {
+      $match: {
+        username: username
+      }
+    },
+    {
+      // note: this pipeline find the channel name from the subscriptions model. and here we...
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "channel",
+        as: "subscribers"
+      }
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "subscriber",
+        as: "subscribedTo"
+      }
+    },
+    {
+      $addFields: {
+        $subscribersCount: {
+          $size: "$subscribers"
+        },
+        $channelSubscribedToCount:{
+          $size: "$subscribedTo"
+        },
+        $isSubscribed: {
+          $cond: {
+            if: {$in: [req.user?._id, "$subscribers.subscriber"]},//note: this line asks that either current user present in subscribers or not?
+            then: true,
+            else: false
+          }
+        }
+      }
+    },{
+      // what this aggregate returns
+      $project: {
+        fullname: 1,
+        username: 1,
+        subscribersCount: 1,
+        channelSubscribedToCount: 1,
+        isSubscribed: 1,
+        avatar: 1,
+        coverimage: 1,
+        email: 1
+      }
+    }
+  ])
+
+  if (!channel.length) {
+    throw new apiError(404, "Channel does not exist")
+  }
+
+  return res
+  .status(200)
+  .json(
+    new apiResponse(200, channel[0], "User channel fetched Successfully!")
+  )
+
+})
+
 export {
   userRegister,
   userLogIn,
@@ -345,4 +418,5 @@ export {
   updateUserDetails,
   updateUserAvatar,
   updateUserCoverImage,
+  getUserChannelProfile
 };
