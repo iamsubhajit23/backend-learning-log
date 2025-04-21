@@ -35,6 +35,14 @@ const videoSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    videofilepublicid: {
+      type: String,
+      required: true
+    },
+    thumbnailpublicid: {
+      type: String,
+      required: true
+    }
   },
   { timestamps: true }
 );
