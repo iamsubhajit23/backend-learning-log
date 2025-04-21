@@ -149,10 +149,83 @@ const updateThumbnail = asyncHandler(async(req, res) => {
   )
 })
 
+const updateVideoInfo = asyncHandler(async(req, res) => {
+  const {title, description} = req.body
+  const {videoId} = req.params
+
+  if (!title && !description) {
+    throw new apiError(400, "Title or description is required")
+  }
+  if (!videoId) {
+    throw new apiError(400, "Video id is required")
+  }
+
+  const videoInfo = await Video.findByIdAndUpdate(
+    videoId,
+    {
+      $set: {
+        ...(title && { title }),
+        ...(description && { description }),
+      }
+    },
+    {
+      new: true
+    }
+  )
+
+  if (!videoInfo) {
+    throw new apiError(400, "No video found with this video id")
+  }
+
+  return res
+  .status(200)
+  .json(
+    new apiResponse(200, videoInfo, "Video Info Updated Successfully!")
+  )
+
+})
+
+const togglePublishStatus = asyncHandler(async(req, res) => {
+  const {videoId} = req.params
+
+  if (!videoId) {
+    throw new apiError(400, "Video id is required")
+  }
+
+  const video = await Video.findById(videoId)
+  if (!video) {
+    throw new apiError(404, "No video found with this video id")
+  }
+
+  const updatedVideo = await Video.findByIdAndUpdate(
+    video._id,
+    {
+      $set: {
+        ispublished: !video.ispublished
+      }
+    },
+    {
+      new: true
+    }
+  )
+  if (!updatedVideo) {
+    throw new apiError(400, "Error while updating video publish status")
+  }
+
+  return res
+  .status(200)
+  .json(
+    new apiResponse(200, updatedVideo, "Video publish status toggled successfully")
+  )
+
+})
+
 export { 
   uploadVideo,
   getVideoById,
   getAllVideos,
   deleteVideo,
   updateThumbnail,
+  updateVideoInfo,
+  togglePublishStatus,
  };
