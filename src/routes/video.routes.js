@@ -17,7 +17,6 @@ router.use(verifyJWT);
 router.route("/").get(getAllVideos);
 
 router.route("/upload-video").post(
-  verifyJWT,
   upload.fields([
     {
       name: "videofile",
@@ -32,7 +31,7 @@ router.route("/upload-video").post(
 );
 
 router
-  .route("/:videoId")
+  .route("/id/:videoId")
   .get(getVideoById)
   .delete(deleteVideo)
   .patch(updateVideoInfo)

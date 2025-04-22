@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import JWT from "jsonwebtoken";
 import mongoose from "mongoose";
+import { deleteLocalFile } from "../utils/deleteLocalFile.js";
 
 const generateAccessTokenAndRefreshToken = async (userId) => {
   try {
@@ -26,22 +27,6 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 
 const userRegister = asyncHandler(async (req, res) => {
   const { username, email, fullname, password } = req.body;
-  //field validation
-  if (
-    [username, email, fullname, password].some((field) => field?.trim() === "")
-  ) {
-    throw new apiError(400, "All fields are required!");
-  }
-
-  //user validation
-  const existedUser = await User.findOne({
-    $or: [{ username }, { email }],
-  });
-  if (existedUser) {
-    throw new apiError(400, "User with same email or username already exists!");
-  }
-
-  //file upload on cloudinary
   const avatarLocalPath = req.files?.avatar[0]?.path;
   //const coverimageLocalPath = req.files?.coverimage[0]?.path;
   let coverimageLocalPath;
@@ -53,13 +38,34 @@ const userRegister = asyncHandler(async (req, res) => {
     coverimageLocalPath = req.files.coverimage[0].path;
   }
 
+  //field validation
+  if (
+    [username, email, fullname, password].some((field) => field?.trim() === "")
+  ) {
+    deleteLocalFile(avatarLocalPath)
+    deleteLocalFile(coverimageLocalPath)
+    throw new apiError(400, "All fields are required!");
+  }
+
+  //user validation
+  const existedUser = await User.findOne({
+    $or: [{ username }, { email }],
+  });
+  if (existedUser) {
+    deleteLocalFile(avatarLocalPath)
+    deleteLocalFile(coverimageLocalPath)
+    throw new apiError(400, "User with same email or username already exists!");
+  }
+
+  //file upload on cloudinary
   if (!avatarLocalPath) {
+    deleteLocalFile(coverimageLocalPath)
     throw new apiError(400, "Avatar file is required for register");
   }
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverimage = await uploadOnCloudinary(coverimageLocalPath);
-  if (!avatar) {
-    throw new apiError(400, "avatar file is required!");
+  if (!avatar.url) {
+    throw new apiError(400, "Error while upload avatar on Cloudinary!");
   }
 
   //create user object on db
@@ -283,9 +289,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     throw new apiError(401, "Avatar file is required!");
   }
 
+  //TODO:unsync localAvatarFile
+
   const avatar = await uploadOnCloudinary(avatarLocalPath); // return response.url
-  
-  //unsync localAvatarFile
 
   if (!avatar.url) {
     throw new apiError(400, "Error, while updating avatar!");

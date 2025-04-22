@@ -14,17 +14,19 @@ const videoSchema = new Schema(
     title: {
       type: String,
       required: true,
+      trim: true,
     },
     description: {
       type: String,
       required: true,
+      trim: true,
     },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
     duration: {
-      type: String,
+      type: Number,
       required: true,
     },
     views: {
@@ -37,12 +39,12 @@ const videoSchema = new Schema(
     },
     videofilepublicid: {
       type: String,
-      required: true
+      required: true,
     },
     thumbnailpublicid: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   { timestamps: true }
 );
