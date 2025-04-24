@@ -5,14 +5,18 @@ import { Subscription } from "../models/subscription.models.js";
 
 const toggleSubscription = asyncHandler(async (req, res) => {
   const { channelId } = req.params;
-  const userId = req.user._id;
+  const subscriberId = req.user._id;
 
   if (!channelId) {
     throw new apiError(400, "Channel id is required");
   }
 
+  if (channelId == subscriberId) {
+    throw new apiError(401," Channel and subscriber id can not be same" )
+  }
+
   const Subscribed = await Subscription.findOne({
-    subscriber: userId,
+    subscriber: subscriberId,
     channel: channelId,
   });
 
@@ -24,7 +28,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
   }
 
   const subscription = await Subscription.create({
-    subscriber: userId,
+    subscriber: subscriberId,
     channel: channelId,
   });
 
