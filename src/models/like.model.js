@@ -10,11 +10,11 @@ const likeModel = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Video",
     },
-    tweets: {
+    tweet: {
       type: Schema.Types.ObjectId,
       ref: "Tweet",
     },
-    comments: {
+    comment: {
       type: Schema.Types.ObjectId,
       ref: "Comment",
     },
