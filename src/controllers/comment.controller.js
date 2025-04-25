@@ -29,14 +29,16 @@ const addCommentOnVideo = asyncHandler(async (req, res) => {
     allowedAttributes: {}, // No attributes allowed
   });
 
-  const newComment = await Comment.create({
+  const createdComment = await Comment.create({
     content: sanitizedComment,
     video: videoId,
     owner: userId,
   });
 
+  const newComment = await Comment.findById(createdComment._id)
+
   if (!newComment) {
-    throw new apiError(401, "Unable to add comment on video");
+    throw new apiError(501, "Unable to add comment on video");
   }
 
   return res

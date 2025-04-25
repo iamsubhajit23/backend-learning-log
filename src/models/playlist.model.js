@@ -11,18 +11,19 @@ const playlistModel = new Schema(
       type: String,
       required: true,
     },
-    videos: {
-      type: Schema.Types.ObjectId,
-      ref: "Video",
-      required: true,
-    },
+    videos: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Video",
+      },
+    ],
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    isPublic: {
+    isPrivate: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   { timestamps: true }
