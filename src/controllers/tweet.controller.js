@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Tweet } from "../models/tweet.model";
+import { Tweet } from "../models/tweet.model.js";
 import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
