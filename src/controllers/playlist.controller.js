@@ -216,7 +216,7 @@ const getPlaylistById = asyncHandler(async(req, res) => {
 })
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
-    const userId = req.params.userId || req.user._id
+    const userId = req.user._id
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
         throw new apiError(400, "Valid user id is required")
