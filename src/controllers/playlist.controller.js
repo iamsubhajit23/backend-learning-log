@@ -299,7 +299,7 @@ const deletePlaylist = asyncHandler(async(req, res) => {
         throw new apiError(403, "You are not authorized to modify this playlist");
     }
 
-    const deletedPlaylist = await Playlist.findByIdAndDelete(playlistId)
+    const deletedPlaylist = await Playlist.findByIdAndDelete(playlist._id)
 
     return res
     .status(200)
