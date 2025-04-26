@@ -11,11 +11,11 @@ import {
 const router = Router();
 router.use(verifyJWT);
 
-router.route("/create-tweet").post(createTweet);
+router.route("/create").post(createTweet);
 
-router.route("/update-tweet/:tweetId").patch(updateTweet);
+router.route("/update/:tweetId").patch(updateTweet);
 
-router.route("/delete-tweet/:tweetId").delete(deleteTweet);
+router.route("/delete/:tweetId").delete(deleteTweet);
 
 router.route("/id/:tweetId").get(getTweetById);
 
