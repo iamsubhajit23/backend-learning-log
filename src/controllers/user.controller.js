@@ -222,7 +222,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const changeUserPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
-  if (!oldPassword && !newPassword) {
+  if (!oldPassword || !newPassword) {
     throw new apiError(401, "oldPassword and newPassword both are required");
   }
 
@@ -264,7 +264,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 const updateUserDetails = asyncHandler(async (req, res) => {
   const { fullname, email } = req.body;
 
-  if (!(fullname || email)) {
+  if (!fullname || !email) {
     throw new apiError(401, "Fullname or Email is required!");
   }
   const user = await User.findByIdAndUpdate(
@@ -276,7 +276,7 @@ const updateUserDetails = asyncHandler(async (req, res) => {
       },
     },
     { new: true }
-  ).select("-password refreshtoken");
+  ).select("-password -refreshtoken");
 
   return res
     .status(200)
@@ -423,7 +423,7 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
       $match: {
-        _id: mongoose.Types.ObjectId(req.user._id),
+        _id: req.user._id,
       },
     },
     {
