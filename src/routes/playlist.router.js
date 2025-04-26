@@ -29,7 +29,7 @@ router.route("/:playlistId").get(getPlaylistById);
 
 router.route("/").get(getUserPlaylists);
 
-router.route("/toggle-publish-status/:playlistId").patch(togglePublishStatus);
+router.route("/toggle-status/:playlistId").patch(togglePublishStatus);
 
 router.route("/delete-playlist/:playlistId").delete(deletePlaylist);
 
