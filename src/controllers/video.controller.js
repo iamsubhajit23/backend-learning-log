@@ -82,7 +82,6 @@ const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params; // get request from url(params)
   if (!videoId) {
     throw new apiError(400, "videoId is required");
-    Z;
   }
 
   const video = await Video.findById(videoId);
@@ -90,6 +89,9 @@ const getVideoById = asyncHandler(async (req, res) => {
   if (!video) {
     throw new apiError(404, "No Video found with this Video Id!");
   }
+
+  video.views += 1;
+  await video.save();
 
   return res
     .status(200)
