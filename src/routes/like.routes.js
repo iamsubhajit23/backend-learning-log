@@ -17,7 +17,7 @@ router.route("/toggle-comment-like/:commentId").post(toggleLikeOnComment);
 
 router.route("/toggle-tweet-like/:tweetId").post(toggleLikeOnTweet);
 
-router.route("/videos-like/:videoId").get(getTotalLikesOnVideo);
+router.route("/video-likes/:videoId").get(getTotalLikesOnVideo);
 
 router.route("/liked-videos").get(getLikedVideos);
 
