@@ -150,8 +150,6 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     throw new apiError(404, "You have not liked any video");
   }
 
-  console.log("likedVideo: ", likedVideo);
-
   return res.status(200).json(
     new apiResponse(
       200,
